@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
-import LogoutButton from "@/components/LogoutButton"
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)
@@ -12,10 +11,6 @@ export default async function Dashboard() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <span className="font-bold text-emerald-600">PrepAI</span>
-        <LogoutButton />
-      </nav>
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
