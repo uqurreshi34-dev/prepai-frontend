@@ -1,0 +1,121 @@
+"use client"
+import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import api from "@/lib/api"
+
+const ROLES = [
+  { value: "", label: "Not set" },
+  { value: "junior_developer", label: "Junior developer" },
+  { value: "marketing_graduate", label: "Marketing graduate" },
+  { value: "finance_analyst", label: "Finance analyst" },
+  { value: "nursing", label: "Nursing" },
+  { value: "general", label: "General" },
+]
+
+export default function Profile() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [targetRole, setTargetRole] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login")
+      return
+    }
+    if (status === "authenticated") {
+      api.get("/api/auth/me/")
+        .then(res => {
+          setTargetRole(res.data.target_role || "")
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+    }
+  }, [status, router])
+
+  async function handleSave() {
+    setSaving(true)
+    setError("")
+    setSuccess(false)
+    try {
+      await api.post("/api/auth/profile/", { target_role: targetRole })
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
+    } catch {
+      setError("Failed to save. Please try again.")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-400 text-sm">Loading...</p>
+      </main>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-50">
+      <div className="max-w-lg mx-auto px-6 py-12">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {session?.user?.email}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="mb-6">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+              Target role
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Set this so PrepAI can pre-select your role on the session setup screen.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ROLES.map(role => (
+                <button
+                  key={role.value}
+                  onClick={() => setTargetRole(role.value)}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
+                    targetRole === role.value
+                      ? "bg-emerald-50 border-emerald-500 text-emerald-700 font-medium"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {role.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="bg-emerald-50 text-emerald-700 text-sm px-4 py-3 rounded-lg mb-4">
+              Profile saved.
+            </div>
+          )}
+
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full bg-emerald-600 text-white font-medium py-2 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
+          >
+            {saving ? "Saving..." : "Save profile"}
+          </button>
+        </div>
+      </div>
+    </main>
+  )
+}

@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
 
@@ -98,6 +98,16 @@ export default function SessionSetup() {
   const [inputMode, setInputMode] = useState("text")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+
+  useEffect(() => {
+    api.get("/api/auth/me/")
+      .then(res => {
+        if (res.data.target_role) {
+          setRole(res.data.target_role)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   async function handleStart() {
     setLoading(true)
