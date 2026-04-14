@@ -18,12 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={geist.className}>
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
-      </body>
+     <body className={`${geist.className} pt-[60px]`}>
+      <Providers>
+        <Navbar />
+        {children}
+      </Providers>
+    </body>
     </html>
   )
 }
