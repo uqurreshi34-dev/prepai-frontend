@@ -49,11 +49,15 @@ function OptionGroup({
           <button
             key={opt.value}
             onClick={() => onChange(opt.value)}
-            className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm border transition-all active:scale-[0.98] cursor-pointer ${
               value === opt.value
-                ? "bg-emerald-50 border-emerald-500 text-emerald-700 font-medium"
+                ? "bg-emerald-50 border-emerald-400 text-emerald-700 font-medium"
                 : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
             }`}
+            style={value === opt.value
+              ? { boxShadow: "0 0 0 3px rgba(5, 150, 105, 0.1)" }
+              : { boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }
+            }
           >
             {opt.label}
           </button>
@@ -64,32 +68,33 @@ function OptionGroup({
 }
 
 function Summary({
-    role,
-    interviewType,
-    questionCount,
-    inputMode,
-  }: {
-    role: string
-    interviewType: string
-    questionCount: number
-    inputMode: string
-  }) {
-    const roleLabel = ROLES.find(r => r.value === role)?.label || role
-    const typeLabel = INTERVIEW_TYPES.find(t => t.value === interviewType)?.label || interviewType
-  
-    return (
-      <div className="bg-gray-50 rounded-lg px-4 py-3 text-sm text-gray-500 mb-6">
-        You&apos;re preparing for a{" "}
-        <span className="text-gray-900 font-medium">{roleLabel}</span> role. This
-        will be a{" "}
-        <span className="text-gray-900 font-medium">
-          {questionCount}-question {typeLabel.toLowerCase()}
-        </span>{" "}
-        interview. You&apos;ll answer by{" "}
-        <span className="text-gray-900 font-medium">{inputMode}</span>.
-      </div>
-    )
-  }
+  role,
+  interviewType,
+  questionCount,
+  inputMode,
+}: {
+  role: string
+  interviewType: string
+  questionCount: number
+  inputMode: string
+}) {
+  const roleLabel = ROLES.find(r => r.value === role)?.label || role
+  const typeLabel = INTERVIEW_TYPES.find(t => t.value === interviewType)?.label || interviewType
+
+  return (
+    <div className="rounded-xl px-4 py-3 text-sm text-gray-500 mb-6 border border-emerald-100"
+      style={{ background: "linear-gradient(135deg, #f0fdf4, #f8fafc)" }}>
+      You&apos;re preparing for a{" "}
+      <span className="text-emerald-700 font-medium">{roleLabel}</span> role. This
+      will be a{" "}
+      <span className="text-emerald-700 font-medium">
+        {questionCount}-question {typeLabel.toLowerCase()}
+      </span>{" "}
+      interview. You&apos;ll answer by{" "}
+      <span className="text-emerald-700 font-medium">{inputMode}</span>.
+    </div>
+  )
+}
 
 export default function SessionSetup() {
   const router = useRouter()
@@ -132,14 +137,15 @@ export default function SessionSetup() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Set up your interview</h1>
+    <main className="min-h-screen" style={{ background: "#f8fafc" }}>
+      <div className="max-w-lg mx-auto px-6 py-10">
+        <div className="mb-7">
+          <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Set up your interview</h1>
           <p className="text-gray-500 mt-1 text-sm">Tell us what you&apos;re preparing for</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl p-6"
+          style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.06)" }}>
           <OptionGroup
             label="Role"
             options={ROLES}
@@ -174,7 +180,8 @@ export default function SessionSetup() {
             />
 
             {error && (
-              <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
+              <div className="bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3 rounded-xl mb-4 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
                 {error}
               </div>
             )}
@@ -182,7 +189,11 @@ export default function SessionSetup() {
             <button
               onClick={handleStart}
               disabled={loading}
-              className="w-full bg-emerald-600 text-white font-medium py-3 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
+              className="w-full text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm active:scale-[0.99]"
+              style={{
+                background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+                boxShadow: "0 2px 8px rgba(5, 150, 105, 0.35)"
+              }}
             >
               {loading ? "Generating questions..." : "Start interview →"}
             </button>

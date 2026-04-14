@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
+import { CheckCircle2 } from "lucide-react"
 
 const ROLES = [
   { value: "", label: "Not set" },
@@ -54,40 +55,45 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+      <main className="min-h-screen flex items-center justify-center" style={{ background: "#f8fafc" }}>
         <p className="text-gray-400 text-sm">Loading...</p>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            {session?.user?.email}
-          </p>
+    <main className="min-h-screen" style={{ background: "#f8fafc" }}>
+      <div className="max-w-lg mx-auto px-6 py-10">
+
+        <div className="mb-7">
+          <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Profile</h1>
+          <p className="text-gray-500 text-sm mt-1">{session?.user?.email}</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl p-6"
+          style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.06)" }}>
+
           <div className="mb-6">
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
               Target role
             </p>
             <p className="text-sm text-gray-500 mb-4">
-              Set this so PrepAI can pre-select your role on the session setup screen.
+              PrepAI will pre-select this on your session setup screen.
             </p>
             <div className="flex flex-wrap gap-2">
               {ROLES.map(role => (
                 <button
                   key={role.value}
                   onClick={() => setTargetRole(role.value)}
-                  className={`px-4 py-2 rounded-lg text-sm border transition-colors ${
+                  className={`px-4 py-2 rounded-xl text-sm border transition-all active:scale-[0.98] cursor-pointer ${
                     targetRole === role.value
-                      ? "bg-emerald-50 border-emerald-500 text-emerald-700 font-medium"
+                      ? "bg-emerald-50 border-emerald-400 text-emerald-700 font-medium"
                       : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
                   }`}
+                  style={targetRole === role.value
+                    ? { boxShadow: "0 0 0 3px rgba(5, 150, 105, 0.1)" }
+                    : { boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }
+                  }
                 >
                   {role.label}
                 </button>
@@ -96,13 +102,15 @@ export default function Profile() {
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
+            <div className="bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3 rounded-xl mb-4 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
               {error}
             </div>
           )}
 
           {success && (
-            <div className="bg-emerald-50 text-emerald-700 text-sm px-4 py-3 rounded-lg mb-4">
+            <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 text-sm px-4 py-3 rounded-xl mb-4 flex items-center gap-2">
+              <CheckCircle2 size={14} className="flex-shrink-0" />
               Profile saved.
             </div>
           )}
@@ -110,7 +118,11 @@ export default function Profile() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full bg-emerald-600 text-white font-medium py-2 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
+            className="w-full text-white font-medium py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm active:scale-[0.99]"
+            style={{
+              background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+              boxShadow: "0 2px 8px rgba(5, 150, 105, 0.3)"
+            }}
           >
             {saving ? "Saving..." : "Save profile"}
           </button>
