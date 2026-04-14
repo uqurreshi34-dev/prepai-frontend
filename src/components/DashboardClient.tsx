@@ -5,6 +5,7 @@ import { Session } from "next-auth"
 import api from "@/lib/api"
 import { getSession } from "next-auth/react"
 import { TrendingUp, Zap, Calendar, ArrowRight } from "lucide-react"
+import { motion, Variants } from "framer-motion"
 
 interface Stats {
   sessions_this_month: number
@@ -23,6 +24,23 @@ interface SessionSummary {
   overall_score: number | null
   completed: boolean
   created_at: string
+}
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }
+  })
+}
+
+const fadeIn: Variants = {
+  hidden: { opacity: 0 },
+  visible: (i: number) => ({
+    opacity: 1,
+    transition: { duration: 0.35, delay: i * 0.06, ease: "easeOut" }
+  })
 }
 
 export default function DashboardClient({ session }: { session: Session }) {
@@ -62,11 +80,47 @@ export default function DashboardClient({ session }: { session: Session }) {
 
   const cardShadow = { boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.06)" }
 
+  const statCards = [
+    {
+      label: "Sessions this month",
+      icon: <Calendar size={13} className="text-emerald-600" />,
+      iconBg: "bg-emerald-50",
+      value: loading ? null : (stats?.sessions_this_month ?? 0),
+      valueClass: "text-gray-900",
+      sub: stats?.sessions_remaining !== undefined
+        ? stats.sessions_remaining > 0
+          ? `${stats.sessions_remaining} remaining on free tier`
+          : "Free tier limit reached"
+        : "3 remaining on free tier",
+    },
+    {
+      label: "Average score",
+      icon: <TrendingUp size={13} className="text-emerald-600" />,
+      iconBg: "bg-emerald-50",
+      value: loading ? null : (stats?.average_score ?? "—"),
+      valueClass: stats?.average_score ? getScoreColor(stats.average_score) : "text-gray-900",
+      sub: stats?.average_score ? "across all sessions" : "Complete a session to see",
+    },
+    {
+      label: "Current streak",
+      icon: <Zap size={13} className="text-amber-500" />,
+      iconBg: "bg-amber-50",
+      value: loading ? null : (stats?.streak ?? 0),
+      valueClass: "text-gray-900",
+      sub: stats?.streak && stats.streak > 0 ? "days in a row" : "Start today",
+    },
+  ]
+
   return (
     <main className="min-h-screen" style={{ background: "#f8fafc" }}>
       <div className="max-w-4xl mx-auto px-6 py-10">
 
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
           <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
             Welcome back, {firstName}
           </h1>
@@ -75,73 +129,46 @@ export default function DashboardClient({ session }: { session: Session }) {
               ? `You're on a ${stats.streak}-day streak. Keep it up.`
               : "Ready to practise?"}
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-2xl p-5" style={cardShadow}>
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Sessions this month</p>
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-                <Calendar size={13} className="text-emerald-600" />
+          {statCards.map((card, i) => (
+            <motion.div
+              key={card.label}
+              className="bg-white rounded-2xl p-5"
+              style={cardShadow}
+              custom={i}
+              variants={fadeUp}
+              initial="hidden"
+              animate="visible"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{card.label}</p>
+                <div className={`w-7 h-7 rounded-lg ${card.iconBg} flex items-center justify-center`}>
+                  {card.icon}
+                </div>
               </div>
-            </div>
-            {loading ? (
-              <div className="h-8 w-12 bg-gray-100 rounded-lg animate-pulse" />
-            ) : (
-              <p className="text-3xl font-bold text-gray-900 tracking-tight">
-                {stats?.sessions_this_month ?? 0}
-              </p>
-            )}
-            <p className="text-xs text-gray-500 mt-1.5">
-              {stats?.sessions_remaining !== undefined
-                ? stats.sessions_remaining > 0
-                  ? `${stats.sessions_remaining} remaining on free tier`
-                  : "Free tier limit reached"
-                : "3 remaining on free tier"}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5" style={cardShadow}>
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Average score</p>
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-                <TrendingUp size={13} className="text-emerald-600" />
-              </div>
-            </div>
-            {loading ? (
-              <div className="h-8 w-12 bg-gray-100 rounded-lg animate-pulse" />
-            ) : (
-              <p className={`text-3xl font-bold tracking-tight ${stats?.average_score ? getScoreColor(stats.average_score) : "text-gray-900"}`}>
-                {stats?.average_score ?? "—"}
-              </p>
-            )}
-            <p className="text-xs text-gray-500 mt-1.5">
-              {stats?.average_score ? "across all sessions" : "Complete a session to see"}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5" style={cardShadow}>
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Current streak</p>
-              <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-                <Zap size={13} className="text-amber-500" />
-              </div>
-            </div>
-            {loading ? (
-              <div className="h-8 w-12 bg-gray-100 rounded-lg animate-pulse" />
-            ) : (
-              <p className="text-3xl font-bold text-gray-900 tracking-tight">
-                {stats?.streak ?? 0}
-              </p>
-            )}
-            <p className="text-xs text-gray-500 mt-1.5">
-              {stats?.streak && stats.streak > 0 ? "days in a row" : "Start today"}
-            </p>
-          </div>
+              {card.value === null ? (
+                <div className="h-8 w-12 bg-gray-100 rounded-lg animate-pulse" />
+              ) : (
+                <p className={`text-3xl font-bold tracking-tight ${card.valueClass}`}>
+                  {card.value}
+                </p>
+              )}
+              <p className="text-xs text-gray-500 mt-1.5">{card.sub}</p>
+            </motion.div>
+          ))}
         </div>
 
         {stats?.last_score && (
-          <div className="bg-white rounded-2xl p-5 mb-6" style={cardShadow}>
+          <motion.div
+            className="bg-white rounded-2xl p-5 mb-6"
+            style={cardShadow}
+            custom={3}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">
               Last session
             </p>
@@ -157,11 +184,20 @@ export default function DashboardClient({ session }: { session: Session }) {
                 <p className="text-xs text-gray-500 mt-0.5">out of 10</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
-        <div className="rounded-2xl p-6 mb-6 text-white relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #059669 0%, #047857 100%)", boxShadow: "0 4px 20px rgba(5, 150, 105, 0.35)" }}>
+        <motion.div
+          className="rounded-2xl p-6 mb-6 text-white relative overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+            boxShadow: "0 4px 20px rgba(5, 150, 105, 0.35)"
+          }}
+          custom={4}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+        >
           <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
             style={{ background: "white", transform: "translate(30%, -30%)" }} />
           <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full opacity-10"
@@ -191,17 +227,26 @@ export default function DashboardClient({ session }: { session: Session }) {
               </Link>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {history.length > 0 && (
-          <div>
+          <motion.div
+            custom={5}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
             <p className="text-xs font-medium text-gray-600 uppercase tracking-wider mb-3">
               Session history
             </p>
             <div className="bg-white rounded-2xl overflow-hidden" style={cardShadow}>
               {history.map((s, i) => (
-                <div
+                <motion.div
                   key={s.id}
+                  custom={i}
+                  variants={fadeIn}
+                  initial="hidden"
+                  animate="visible"
                   className={`flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors ${
                     i !== history.length - 1 ? "border-b border-gray-100" : ""
                   }`}
@@ -231,10 +276,10 @@ export default function DashboardClient({ session }: { session: Session }) {
                       </span>
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
       </div>
