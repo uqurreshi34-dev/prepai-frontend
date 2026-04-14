@@ -13,14 +13,29 @@ interface Stats {
   streak: number
 }
 
+interface SessionSummary {
+  id: number
+  role: string
+  interview_type: string
+  question_count: number
+  overall_score: number | null
+  completed: boolean
+  created_at: string
+}
+
 export default function DashboardClient({ session }: { session: Session }) {
   const [stats, setStats] = useState<Stats | null>(null)
+  const [history, setHistory] = useState<SessionSummary[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get("/api/dashboard/stats/")
-      .then(res => {
-        setStats(res.data)
+    Promise.all([
+      api.get("/api/dashboard/stats/"),
+      api.get("/api/sessions/history/"),
+    ])
+      .then(([statsRes, historyRes]) => {
+        setStats(statsRes.data)
+        setHistory(historyRes.data)
         setLoading(false)
       })
       .catch(() => setLoading(false))
@@ -32,6 +47,12 @@ export default function DashboardClient({ session }: { session: Session }) {
     if (score >= 8) return "text-emerald-600"
     if (score >= 6) return "text-amber-500"
     return "text-red-500"
+  }
+
+  function getScoreBadgeStyle(score: number) {
+    if (score >= 8) return "bg-emerald-50 text-emerald-700 border-emerald-200"
+    if (score >= 6) return "bg-amber-50 text-amber-700 border-amber-200"
+    return "bg-red-50 text-red-700 border-red-200"
   }
 
   return (
@@ -134,6 +155,51 @@ export default function DashboardClient({ session }: { session: Session }) {
             Start interview
           </Link>
         </div>
+        {history.length > 0 && (
+          <div className="mt-6">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+              Session history
+            </p>
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              {history.map((s, i) => (
+                <div
+                  key={s.id}
+                  className={`flex items-center justify-between px-6 py-4 ${
+                    i !== history.length - 1 ? "border-b border-gray-100" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col">
+                      <p className="text-sm font-medium text-gray-900">{s.role}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 capitalize">
+                        {s.interview_type} · {s.question_count} questions · {s.created_at}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {s.completed && s.overall_score !== null ? (
+                      <>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${getScoreBadgeStyle(s.overall_score)}`}>
+                          {s.overall_score}/10
+                        </span>
+                        <a
+                          href={`/session/${s.id}/results`}
+                          className="text-xs text-emerald-600 hover:underline"
+                        >
+                          View
+                        </a>
+                      </>
+                    ) : (
+                      <span className="text-xs text-gray-400 px-2.5 py-1 rounded-full border border-gray-200">
+                        Incomplete
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
     </main>
