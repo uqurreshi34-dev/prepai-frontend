@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Session } from "next-auth"
 import api from "@/lib/api"
+import { getSession } from "next-auth/react"
 
 interface Stats {
   sessions_this_month: number
@@ -29,6 +30,7 @@ export default function DashboardClient({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // getSession().then(s => console.log("session in dashboard:", s))
     Promise.all([
       api.get("/api/dashboard/stats/"),
       api.get("/api/sessions/history/"),
@@ -139,22 +141,31 @@ export default function DashboardClient({ session }: { session: Session }) {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            {stats?.sessions_this_month === 0
-              ? "Start your first session"
-              : "Start another session"}
-          </h2>
-          <p className="text-gray-500 text-sm mb-6">
-            Pick a role, answer real interview questions, get instant feedback.
-          </p>
-          <Link
-            href="/session/setup"
-            className="inline-block bg-emerald-600 text-white font-medium px-8 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
-          >
-            Start interview
-          </Link>
-        </div>
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              {stats?.sessions_this_month === 0
+                ? "Start your first session"
+                : "Start another session"}
+            </h2>
+            <p className="text-gray-500 text-sm mb-6">
+              Pick a role, answer real interview questions, get instant feedback.
+            </p>
+            {stats && stats.sessions_remaining === 0 ? (
+              <Link
+                href="/upgrade"
+                className="inline-block bg-amber-500 text-white font-medium px-8 py-3 rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                Upgrade to continue
+              </Link>
+            ) : (
+              <Link
+                href="/session/setup"
+                className="inline-block bg-emerald-600 text-white font-medium px-8 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
+              >
+                Start interview
+              </Link>
+            )}
+          </div>
         {history.length > 0 && (
           <div className="mt-6">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">

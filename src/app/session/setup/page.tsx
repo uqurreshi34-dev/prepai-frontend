@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
+import axios from "axios"
 
 const ROLES = [
   { value: "junior_developer", label: "Junior developer" },
@@ -120,8 +121,12 @@ export default function SessionSetup() {
         input_mode: inputMode,
       })
       router.push(`/session/${res.data.session_id}`)
-    } catch {
-      setError("Failed to start session. Please try again.")
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.data?.error === "free_tier_limit") {
+        router.push("/upgrade")
+      } else {
+        setError("Failed to start session. Please try again.")
+      }
       setLoading(false)
     }
   }
