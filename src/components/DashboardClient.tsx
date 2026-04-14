@@ -157,7 +157,7 @@ export default function DashboardClient({ session }: { session: Session }) {
         </div>
         {history.length > 0 && (
           <div className="mt-6">
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
               Session history
             </p>
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -171,7 +171,7 @@ export default function DashboardClient({ session }: { session: Session }) {
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col">
                       <p className="text-sm font-medium text-gray-900">{s.role}</p>
-                      <p className="text-xs text-gray-400 mt-0.5 capitalize">
+                      <p className="text-xs text-gray-500 mt-0.5 capitalize">
                         {s.interview_type} · {s.question_count} questions · {s.created_at}
                       </p>
                     </div>
@@ -190,7 +190,7 @@ export default function DashboardClient({ session }: { session: Session }) {
                         </a>
                       </>
                     ) : (
-                      <span className="text-xs text-gray-400 px-2.5 py-1 rounded-full border border-gray-200">
+                      <span className="text-xs text-gray-500 px-2.5 py-1 rounded-full border border-gray-300">
                         Incomplete
                       </span>
                     )}
