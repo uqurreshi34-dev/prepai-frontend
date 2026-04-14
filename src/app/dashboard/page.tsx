@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
+import Link from "next/link"
 import { authOptions } from "@/lib/auth"
 
 export default async function Dashboard() {
@@ -42,9 +43,12 @@ export default async function Dashboard() {
           <p className="text-gray-500 text-sm mb-6">
             Pick a role, answer real interview questions, get instant feedback.
           </p>
-          <button className="bg-emerald-600 text-white font-medium px-8 py-3 rounded-lg hover:bg-emerald-700 transition-colors">
+          <Link
+            href="/session/setup"
+            className="inline-block bg-emerald-600 text-white font-medium px-8 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
+          >
             Start interview
-          </button>
+          </Link>
         </div>
       </div>
     </main>

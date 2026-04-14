@@ -5,7 +5,7 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
       <div className="max-w-xl text-center">
         <div className="inline-block bg-emerald-50 text-emerald-700 text-sm font-medium px-3 py-1 rounded-full mb-6">
-          Now in early access
+          Free to try
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Practice until you&apos;re dangerous.
