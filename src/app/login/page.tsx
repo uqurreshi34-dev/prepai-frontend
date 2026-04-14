@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"
+import axios from "axios"
 
 export default function Login() {
   const router = useRouter()
@@ -28,6 +29,8 @@ export default function Login() {
 
     if (res?.ok) {
       router.push("/dashboard")
+    } else if (res?.error === "email_not_verified") {
+      setError("email_not_verified")
     } else {
       setError("Invalid email or password.")
     }
@@ -57,9 +60,29 @@ export default function Login() {
           style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08), 0 24px 48px rgba(0,0,0,0.04)" }}>
 
           {error && (
-            <div className="bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3 rounded-xl mb-5 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
-              {error}
+            <div className="bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3 rounded-xl mb-5">
+              {error === "email_not_verified" ? (
+                <div>
+                  <p className="font-medium mb-1">Email not verified</p>
+                  <p className="text-xs mb-2">Please check your inbox and click the verification link.</p>
+                  <button
+                    onClick={async () => {
+                      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/resend-verification/`, { email })
+                      setError("resent")
+                    }}
+                    className="text-xs underline cursor-pointer"
+                  >
+                    Resend verification email
+                  </button>
+                </div>
+              ) : error === "resent" ? (
+                <p className="text-emerald-700">Verification email resent. Check your inbox.</p>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                  {error}
+                </div>
+              )}
             </div>
           )}
 

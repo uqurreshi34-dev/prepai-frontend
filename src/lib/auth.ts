@@ -35,7 +35,10 @@ export const authOptions: NextAuthOptions = {
             }
           }
           return null
-        } catch {
+        } catch (err) {
+          if (axios.isAxiosError(err) && err.response?.data?.error === "email_not_verified") {
+            throw new Error("email_not_verified")
+          }
           return null
         }
       },
