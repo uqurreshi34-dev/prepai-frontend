@@ -310,7 +310,7 @@ export default function Home() {
       </section>
 
       <footer className="border-t px-6 py-6 text-center" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-        <p className="text-xs" style={{ color: "#374151" }}>
+        <p className="text-xs" style={{ color: "#6b7280" }}>
           © 2026 PrepAI. Built to help everyone interview better.
         </p>
       </footer>
