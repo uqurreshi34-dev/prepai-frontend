@@ -1,10 +1,11 @@
 "use client"
 import { useSession } from "next-auth/react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Mic, BarChart3, Zap } from "lucide-react"
+import axios from "axios"
 
 const features = [
   {
@@ -30,6 +31,76 @@ function anim(delay: number) {
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] as const }
   }
+}
+
+function WaitlistForm() {
+  const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "duplicate" | "error">("idle")
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus("loading")
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/waitlist/`,
+        { email }
+      )
+      if (res.data.message?.includes("already")) {
+        setStatus("duplicate")
+      } else {
+        setStatus("success")
+        setEmail("")
+      }
+    } catch {
+      setStatus("error")
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium"
+        style={{ background: "rgba(5,150,105,0.15)", color: "#34d399", border: "1px solid rgba(5,150,105,0.3)" }}>
+        <div className="w-2 h-2 rounded-full bg-emerald-400" />
+        You&apos;re on the list! We&apos;ll be in touch soon.
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      <input
+        type="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+        placeholder="your@email.com"
+        className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        style={{ background: "rgba(255,255,255,0.95)" }}
+      />
+      <button
+        type="submit"
+        disabled={status === "loading"}
+        className="px-6 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 active:scale-[0.98]"
+        style={{
+          background: "linear-gradient(135deg, #059669, #047857)",
+          color: "white",
+          boxShadow: "0 2px 8px rgba(5,150,105,0.35)"
+        }}
+      >
+        {status === "loading" ? "Joining..." : "Join waitlist"}
+      </button>
+      {status === "duplicate" && (
+        <p className="text-xs text-center w-full" style={{ color: "#6b7280" }}>
+          You&apos;re already on the waitlist!
+        </p>
+      )}
+      {status === "error" && (
+        <p className="text-xs text-center w-full text-red-400">
+          Something went wrong. Please try again.
+        </p>
+      )}
+    </form>
+  )
 }
 
 export default function Home() {
@@ -168,6 +239,28 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+
+          <motion.div
+          className="mt-16 rounded-2xl p-8 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.85 }}
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#4b5563" }}>
+            Early access
+          </p>
+          <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#f0fdf4" }}>
+            Get notified when we launch
+          </h2>
+          <p className="text-sm mb-6" style={{ color: "#6b7280" }}>
+            Join the waitlist and be first in line when PrepAI opens to everyone.
+          </p>
+          <WaitlistForm />
+        </motion.div>
 
           <motion.div
             className="mt-16 rounded-2xl p-8 text-center"
