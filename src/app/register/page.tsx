@@ -63,7 +63,7 @@ export default function Register() {
   }
 
   async function handleGoogle() {
-    await signIn("google", { callbackUrl: "/dashboard" })
+    await signIn("google", { callbackUrl: "/dashboard", prompt: "select_account" })
   }
 
   const inputClass = "w-full border border-gray-200 rounded-xl py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"

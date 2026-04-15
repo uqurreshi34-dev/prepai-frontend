@@ -37,7 +37,7 @@ export default function Login() {
   }
 
   async function handleGoogle() {
-    await signIn("google", { callbackUrl: "/dashboard" })
+    await signIn("google", { callbackUrl: "/dashboard", prompt: "select_account" })
   }
 
   return (
