@@ -84,7 +84,7 @@ export default function Register() {
               We sent a verification link to
             </p>
             <p className="text-sm font-medium text-gray-900 mb-6">{email}</p>
-            <p className="text-xs text-gray-400 mb-6">
+            <p className="text-xs text-gray-600 mb-6">
               Click the link in the email to activate your account. Check your spam folder if you don&apos;t see it.
             </p>
 

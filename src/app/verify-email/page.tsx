@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { signIn } from "next-auth/react"
 import axios from "axios"
 import { CheckCircle2, XCircle } from "lucide-react"
 import Link from "next/link"
@@ -55,7 +54,7 @@ function VerifyEmailContent() {
               </div>
               <h1 className="text-xl font-semibold text-gray-900 mb-2">Email verified!</h1>
               <p className="text-sm text-gray-500 mb-1">Your account is now active.</p>
-              <p className="text-sm text-gray-400">Redirecting you to the login page...</p>
+              <p className="text-sm text-gray-500">Redirecting you to the login page...</p>
             </>
           )}
 
