@@ -1,4 +1,7 @@
 "use client"
+import { useSession } from "next-auth/react"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Mic, BarChart3, Zap } from "lucide-react"
@@ -30,31 +33,40 @@ function anim(delay: number) {
 }
 
 export default function Home() {
+  const { status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard")
+    }
+  }, [status, router])
+
+  if (status === "loading" || status === "authenticated") {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ background: "#0a0f0d" }}>
+        <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen flex flex-col" style={{ background: "#0a0f0d" }}>
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div style={{
-          position: "absolute",
-          top: "-20%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "800px",
-          height: "600px",
+          position: "absolute", top: "-20%", left: "50%", transform: "translateX(-50%)",
+          width: "800px", height: "600px",
           background: "radial-gradient(ellipse at center, rgba(5,150,105,0.15) 0%, transparent 70%)",
         }} />
         <div style={{
-          position: "absolute",
-          top: "10%",
-          right: "-10%",
-          width: "400px",
-          height: "400px",
+          position: "absolute", top: "10%", right: "-10%",
+          width: "400px", height: "400px",
           background: "radial-gradient(ellipse at center, rgba(5,150,105,0.06) 0%, transparent 70%)",
         }} />
       </div>
 
       <section className="relative flex flex-col items-center justify-center flex-1 px-6 pt-24 pb-20 text-center">
-
         <motion.div {...anim(0.1)}>
           <div className="inline-flex items-center gap-2 border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium px-4 py-1.5 rounded-full mb-8">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -113,18 +125,13 @@ export default function Home() {
           </Link>
         </motion.div>
 
-        <motion.p
-          className="text-xs mt-6"
-          style={{ color: "#4b5563" }}
-          {...anim(0.5)}
-        >
+        <motion.p className="text-xs mt-6" style={{ color: "#4b5563" }} {...anim(0.5)}>
           3 free sessions per month. No setup needed.
         </motion.p>
       </section>
 
       <section className="relative px-6 pb-24">
         <div className="max-w-4xl mx-auto">
-
           <motion.div
             className="text-center mb-12"
             initial={{ opacity: 0 }}
@@ -146,7 +153,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 + i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
-                className="rounded-2xl p-6 group"
+                className="rounded-2xl p-6"
                 style={{
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.08)",
@@ -190,7 +197,6 @@ export default function Home() {
               Start practising free →
             </Link>
           </motion.div>
-
         </div>
       </section>
 
