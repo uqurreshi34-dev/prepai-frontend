@@ -2,7 +2,7 @@
 import { useEffect, useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import axios from "axios"
-import { Users, BarChart3, ShieldCheck, TrendingUp } from "lucide-react"
+import { Users, BarChart3, ShieldCheck, TrendingUp, Mail } from "lucide-react"
 
 interface UserRow {
   id: number
@@ -16,11 +16,18 @@ interface UserRow {
   google: boolean
 }
 
+interface WaitlistRow {
+  email: string
+  joined: string
+}
+
 interface AdminData {
   total_users: number
   total_sessions: number
   verified_emails: number
   avg_score: number | null
+  waitlist_count: number
+  waitlist: WaitlistRow[]
   users: UserRow[]
 }
 
@@ -77,6 +84,7 @@ function AdminContent() {
     { label: "Total sessions", value: data.total_sessions, icon: <BarChart3 size={14} className="text-blue-600" />, bg: "bg-blue-50" },
     { label: "Verified emails", value: data.verified_emails, icon: <ShieldCheck size={14} className="text-emerald-600" />, bg: "bg-emerald-50" },
     { label: "Avg score", value: data.avg_score ?? "—", icon: <TrendingUp size={14} className="text-amber-500" />, bg: "bg-amber-50" },
+    { label: "Waitlist", value: data.waitlist_count, icon: <Mail size={14} className="text-purple-600" />, bg: "bg-purple-50" },
   ]
 
   return (
@@ -93,7 +101,7 @@ function AdminContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {statCards.map(card => (
             <div key={card.label} className="bg-white rounded-2xl p-5" style={cardShadow}>
               <div className="flex items-center justify-between mb-3">
@@ -107,7 +115,7 @@ function AdminContent() {
           ))}
         </div>
 
-        <div className="bg-white rounded-2xl overflow-hidden" style={cardShadow}>
+        <div className="bg-white rounded-2xl overflow-hidden mb-6" style={cardShadow}>
           <div className="px-6 py-4 border-b border-gray-100">
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">All users</p>
           </div>
@@ -176,6 +184,38 @@ function AdminContent() {
             </table>
           </div>
         </div>
+
+        {data.waitlist.length > 0 && (
+          <div className="bg-white rounded-2xl overflow-hidden" style={cardShadow}>
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Waitlist</p>
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full border bg-purple-50 text-purple-700 border-purple-200">
+                {data.waitlist_count} {data.waitlist_count === 1 ? "entry" : "entries"}
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100" style={{ background: "#fafafa" }}>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Joined</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.waitlist.map((entry, i) => (
+                    <tr
+                      key={entry.email}
+                      className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${i === data.waitlist.length - 1 ? "border-0" : ""}`}
+                    >
+                      <td className="px-6 py-4 text-sm text-gray-900">{entry.email}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{entry.joined}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
       </div>
     </main>
