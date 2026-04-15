@@ -66,40 +66,56 @@ function WaitlistForm() {
     )
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-      <input
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        required
-        placeholder="your@email.com"
-        className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-        style={{ background: "rgba(255,255,255,0.95)" }}
-      />
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="px-6 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 active:scale-[0.98]"
-        style={{
-          background: "linear-gradient(135deg, #059669, #047857)",
-          color: "white",
-          boxShadow: "0 2px 8px rgba(5,150,105,0.35)"
-        }}
-      >
-        {status === "loading" ? "Joining..." : "Join waitlist"}
-      </button>
-      {status === "duplicate" && (
-        <p className="text-xs text-center w-full" style={{ color: "#6b7280" }}>
+  if (status === "duplicate") {
+    return (
+      <div className="flex flex-col items-center gap-3">
+        <div className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium"
+          style={{ background: "rgba(234,179,8,0.12)", color: "#fbbf24", border: "1px solid rgba(234,179,8,0.25)" }}>
+          <div className="w-2 h-2 rounded-full bg-yellow-400" />
           You&apos;re already on the waitlist!
-        </p>
-      )}
+        </div>
+        <button
+          onClick={() => setStatus("idle")}
+          className="text-xs underline cursor-pointer"
+          style={{ color: "#6b7280" }}
+        >
+          Use a different email
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3 max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full">
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+          placeholder="your@email.com"
+          className="flex-1 px-4 py-3 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          style={{ background: "rgba(255,255,255,0.95)", minWidth: 0 }}
+        />
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="whitespace-nowrap px-6 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 active:scale-[0.98]"
+          style={{
+            background: "linear-gradient(135deg, #059669, #047857)",
+            color: "white",
+            boxShadow: "0 2px 8px rgba(5,150,105,0.35)"
+          }}
+        >
+          {status === "loading" ? "Joining..." : "Join waitlist"}
+        </button>
+      </form>
       {status === "error" && (
-        <p className="text-xs text-center w-full text-red-400">
+        <p className="text-xs" style={{ color: "#f87171" }}>
           Something went wrong. Please try again.
         </p>
       )}
-    </form>
+    </div>
   )
 }
 
