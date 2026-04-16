@@ -78,7 +78,7 @@ export default function Profile() {
               Target role
             </p>
             <p className="text-sm text-gray-500 mb-4">
-              PrepAI will pre-select this on your session setup screen.
+              RehearsAI will pre-select this on your session setup screen.
             </p>
             <div className="flex flex-wrap gap-2">
               {ROLES.map(role => (
