@@ -257,26 +257,26 @@ export default function Home() {
           </div>
 
           <motion.div
-          className="mt-16 rounded-2xl p-8 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.85 }}
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
-          <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#4b5563" }}>
-            Early access
-          </p>
-          <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#f0fdf4" }}>
-            Get notified when we launch
-          </h2>
-          <p className="text-sm mb-6" style={{ color: "#6b7280" }}>
-            Join the waitlist and be first in line when PrepAI opens to everyone.
-          </p>
-          <WaitlistForm />
-        </motion.div>
+            className="mt-16 rounded-2xl p-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.85 }}
+            style={{
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+          >
+            <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#4b5563" }}>
+              Early access
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#f0fdf4" }}>
+              Get notified when we launch
+            </h2>
+            <p className="text-sm mb-6" style={{ color: "#6b7280" }}>
+              Join the waitlist and be first in line when RehearsAI opens to everyone.
+            </p>
+            <WaitlistForm />
+          </motion.div>
 
           <motion.div
             className="mt-16 rounded-2xl p-8 text-center"
@@ -292,7 +292,7 @@ export default function Home() {
               Human coaches charge £80–200 per session.
             </p>
             <p className="mb-6" style={{ color: "#6b7280" }}>
-              PrepAI gives you the same quality feedback, unlimited practice, for £8/month.
+              RehearsAI gives you the same quality feedback, unlimited practice, for £8/month.
             </p>
             <Link
               href="/register"
@@ -311,7 +311,7 @@ export default function Home() {
 
       <footer className="border-t px-6 py-6 text-center" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
         <p className="text-xs" style={{ color: "#6b7280" }}>
-          © 2026 PrepAI. Built to help everyone interview better.
+          © 2026 RehearsAI. Built to help everyone interview better.
         </p>
       </footer>
 

@@ -76,7 +76,7 @@ export default function Navbar() {
             <path d="M7 1L9.5 5.5H13L10.5 8.5L11.5 13L7 10.5L2.5 13L3.5 8.5L1 5.5H4.5L7 1Z" fill="white" fillOpacity="0.95"/>
           </svg>
         </div>
-        PrepAI
+        RehearsAI
       </Link>
 
       <div className="flex items-center gap-3">

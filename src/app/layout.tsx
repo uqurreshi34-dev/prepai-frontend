@@ -7,33 +7,33 @@ import Navbar from "@/components/Navbar"
 const geist = Geist({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://prep-ai-sepia.vercel.app"),
+  metadataBase: new URL("https://rehearsai.co.uk"),
   title: {
-    default: "PrepAI — AI Mock Interview Coach",
-    template: "%s | PrepAI",
+    default: "RehearsAI — AI Mock Interview Coach",
+    template: "%s | RehearsAI",
   },
   description: "Practice job interviews with an AI coach. Get real-time feedback on every answer — clarity, relevance, and depth. Free to try, no credit card required.",
   keywords: ["mock interview", "interview practice", "AI interview coach", "job interview preparation", "interview feedback"],
-  authors: [{ name: "PrepAI" }],
+  authors: [{ name: "RehearsAI" }],
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://prep-ai-sepia.vercel.app",
-    siteName: "PrepAI",
-    title: "PrepAI — AI Mock Interview Coach",
+    url: "https://rehearsai.co.uk",
+    siteName: "RehearsAI",
+    title: "RehearsAI — AI Mock Interview Coach",
     description: "Practice job interviews with an AI coach. Get real-time feedback on every answer. Free to try.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "PrepAI — AI Mock Interview Coach",
+        alt: "RehearsAI — AI Mock Interview Coach",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PrepAI — AI Mock Interview Coach",
+    title: "RehearsAI — AI Mock Interview Coach",
     description: "Practice job interviews with an AI coach. Get real-time feedback on every answer. Free to try.",
     images: ["/og-image.png"],
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  verification:{
+  verification: {
     google: "-t4qkQUzQpXCy9d2N2tBXg6cLupxOsXcNnH-y_JiIfg"
   }
 }

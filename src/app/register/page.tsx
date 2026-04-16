@@ -124,7 +124,7 @@ export default function Register() {
             </svg>
           </div>
           <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Create account</h1>
-          <p className="text-sm text-gray-500 mt-1">Start practising with PrepAI for free</p>
+          <p className="text-sm text-gray-500 mt-1">Start practising with RehearsAI for free</p>
         </div>
 
         <div className="bg-white rounded-2xl p-8"
