@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     default: "RehearsAI — AI Mock Interview Coach",
     template: "%s | RehearsAI",
   },
+  icons: {
+    icon: "/favicon.png",
+  },
   description: "Practice job interviews with an AI coach. Get real-time feedback on every answer — clarity, relevance, and depth. Free to try, no credit card required.",
   keywords: ["mock interview", "interview practice", "AI interview coach", "job interview preparation", "interview feedback"],
   authors: [{ name: "RehearsAI" }],
@@ -30,9 +33,6 @@ export const metadata: Metadata = {
         alt: "RehearsAI — AI Mock Interview Coach",
       },
     ],
-  },
-  icons: {
-    icon: "/favicon.png",
   },
   twitter: {
     card: "summary_large_image",
