@@ -33,27 +33,10 @@ function anim(delay: number) {
   }
 }
 
-function useGlow() {
-  const ref = useRef<HTMLDivElement>(null)
-  const [glowing, setGlowing] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => setGlowing(entry.isIntersecting),
-      { threshold: 0.15 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
-  return { ref, glowing }
-}
-
 function GlowSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [glowing, setGlowing] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const el = ref.current
@@ -61,12 +44,14 @@ function GlowSection({ children, delay = 0 }: { children: React.ReactNode; delay
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          setVisible(true)
           setTimeout(() => setGlowing(true), delay)
         } else {
           setGlowing(false)
+          setVisible(false)
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
     )
     observer.observe(el)
     return () => observer.disconnect()
@@ -76,11 +61,13 @@ function GlowSection({ children, delay = 0 }: { children: React.ReactNode; delay
     <div
       ref={ref}
       style={{
-        transition: "filter 0.8s ease, opacity 0.8s ease",
-        filter: glowing
-          ? "drop-shadow(0 0 24px rgba(5,150,105,0.35))"
-          : "drop-shadow(0 0 0px rgba(5,150,105,0))",
-        opacity: glowing ? 1 : 0.7,
+        transition: "box-shadow 0.8s ease, opacity 0.6s ease, transform 0.6s ease",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(16px)",
+        borderRadius: "16px",
+        boxShadow: glowing
+          ? "0 0 0 1px rgba(5,150,105,0.5), 0 0 40px rgba(5,150,105,0.2), 0 0 80px rgba(5,150,105,0.08)"
+          : "0 0 0 0px rgba(5,150,105,0)",
       }}
     >
       {children}
@@ -386,8 +373,8 @@ export default function Home() {
                   border: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.34.07 2.27.74 3.04.8 1.16-.23 2.26-.93 3.52-.84 1.5.12 2.63.72 3.37 1.84-3.1 1.86-2.38 5.98.48 7.13-.57 1.5-1.32 2.99-2.41 3.95zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" fill="white" opacity="0.9"/>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zm-2.5-1C3.67 17 3 16.33 3 15.5v-6C3 8.67 3.67 8 4.5 8S6 8.67 6 9.5v6c0 .83-.67 1.5-1.5 1.5zm15 0c-.83 0-1.5-.67-1.5-1.5v-6c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v6c0 .83-.67 1.5-1.5 1.5zM15.53 2.16l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48A5.84 5.84 0 0 0 12 1c-.95 0-1.84.23-2.64.63L7.88.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.3 1.3C7.14 3.07 6 4.66 6 6.5v.5h12v-.5c0-1.84-1.14-3.43-2.47-4.34zM10 5H9V4h1v1zm5 0h-1V4h1v1z" fill="white" opacity="0.9"/>
                 </svg>
                 <div className="text-left">
                   <p className="text-xs" style={{ color: "#6b7280" }}>Coming soon to</p>
