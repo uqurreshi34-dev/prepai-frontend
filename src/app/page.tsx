@@ -1,6 +1,6 @@
 "use client"
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -31,6 +31,61 @@ function anim(delay: number) {
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] as const }
   }
+}
+
+function useGlow() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [glowing, setGlowing] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setGlowing(entry.isIntersecting),
+      { threshold: 0.15 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return { ref, glowing }
+}
+
+function GlowSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [glowing, setGlowing] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setGlowing(true), delay)
+        } else {
+          setGlowing(false)
+        }
+      },
+      { threshold: 0.15 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [delay])
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        transition: "filter 0.8s ease, opacity 0.8s ease",
+        filter: glowing
+          ? "drop-shadow(0 0 24px rgba(5,150,105,0.35))"
+          : "drop-shadow(0 0 0px rgba(5,150,105,0))",
+        opacity: glowing ? 1 : 0.7,
+      }}
+    >
+      {children}
+    </div>
+  )
 }
 
 function WaitlistForm() {
@@ -233,79 +288,115 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 + i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
-                className="rounded-2xl p-6"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)"
-                }}
-              >
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
-                  {f.icon}
-                </div>
-                <h3 className="font-semibold mb-2 text-sm" style={{ color: "#f0fdf4" }}>{f.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#6b7280" }}>{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+          <GlowSection>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {features.map((f, i) => (
+                <motion.div
+                  key={f.title}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 + i * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
+                  className="rounded-2xl p-6"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)"
+                  }}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
+                    {f.icon}
+                  </div>
+                  <h3 className="font-semibold mb-2 text-sm" style={{ color: "#f0fdf4" }}>{f.title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: "#6b7280" }}>{f.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </GlowSection>
 
-          <motion.div
-            className="mt-16 rounded-2xl p-8 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.85 }}
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
-            <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#4b5563" }}>
-              Early access
-            </p>
-            <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#f0fdf4" }}>
-              Get notified when we launch
-            </h2>
-            <p className="text-sm mb-6" style={{ color: "#6b7280" }}>
-              Join the waitlist and be first in line when RehearsAI opens to everyone.
-            </p>
-            <WaitlistForm />
-          </motion.div>
-
-          <motion.div
-            className="mt-16 rounded-2xl p-8 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.9 }}
-            style={{
-              background: "linear-gradient(135deg, rgba(5,150,105,0.12), rgba(4,120,87,0.06))",
-              border: "1px solid rgba(5,150,105,0.25)",
-            }}
-          >
-            <p className="text-2xl font-bold mb-2" style={{ color: "#f0fdf4" }}>
-              Human coaches charge £80–200 per session.
-            </p>
-            <p className="mb-6" style={{ color: "#6b7280" }}>
-              RehearsAI gives you the same quality feedback, unlimited practice, for £8/month.
-            </p>
-            <Link
-              href="/register"
-              className="inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-xl text-sm transition-all active:scale-[0.98]"
+          <GlowSection delay={100}>
+            <div
+              className="mt-16 rounded-2xl p-8 text-center"
               style={{
-                background: "linear-gradient(135deg, #059669, #047857)",
-                color: "white",
-                boxShadow: "0 4px 16px rgba(5,150,105,0.35)"
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
               }}
             >
-              Start practising free →
-            </Link>
-          </motion.div>
+              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#4b5563" }}>
+                Early access
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#f0fdf4" }}>
+                Get notified when we launch
+              </h2>
+              <p className="text-sm mb-6" style={{ color: "#6b7280" }}>
+                Join the waitlist and be first in line when RehearsAI opens to everyone.
+              </p>
+              <WaitlistForm />
+            </div>
+          </GlowSection>
+
+          <GlowSection delay={150}>
+            <div
+              className="mt-16 rounded-2xl p-8 text-center"
+              style={{
+                background: "linear-gradient(135deg, rgba(5,150,105,0.12), rgba(4,120,87,0.06))",
+                border: "1px solid rgba(5,150,105,0.25)",
+              }}
+            >
+              <p className="text-2xl font-bold mb-2" style={{ color: "#f0fdf4" }}>
+                Human coaches charge £80–200 per session.
+              </p>
+              <p className="mb-6" style={{ color: "#6b7280" }}>
+                RehearsAI gives you the same quality feedback, unlimited practice, for £8/month.
+              </p>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-xl text-sm transition-all active:scale-[0.98]"
+                style={{
+                  background: "linear-gradient(135deg, #059669, #047857)",
+                  color: "white",
+                  boxShadow: "0 4px 16px rgba(5,150,105,0.35)"
+                }}
+              >
+                Start practising free →
+              </Link>
+            </div>
+          </GlowSection>
+
+          <GlowSection delay={100}>
+            <div
+              className="mt-16 rounded-2xl p-8 text-center"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <p className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: "#4b5563" }}>
+                Mobile app
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#f0fdf4" }}>
+                Coming soon to Android
+              </h2>
+              <p className="text-sm mb-6" style={{ color: "#6b7280" }}>
+                The full RehearsAI experience on your phone — practice on the go, anywhere, anytime.
+              </p>
+              <div
+                className="inline-flex items-center gap-3 px-5 py-3 rounded-xl"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.34.07 2.27.74 3.04.8 1.16-.23 2.26-.93 3.52-.84 1.5.12 2.63.72 3.37 1.84-3.1 1.86-2.38 5.98.48 7.13-.57 1.5-1.32 2.99-2.41 3.95zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" fill="white" opacity="0.9"/>
+                </svg>
+                <div className="text-left">
+                  <p className="text-xs" style={{ color: "#6b7280" }}>Coming soon to</p>
+                  <p className="text-sm font-semibold" style={{ color: "#f0fdf4" }}>Google Play</p>
+                </div>
+              </div>
+            </div>
+          </GlowSection>
+
         </div>
       </section>
 
