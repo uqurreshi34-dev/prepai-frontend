@@ -31,6 +31,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+  icons: {
+    icon: "/favicon.png",
+  },
   twitter: {
     card: "summary_large_image",
     title: "RehearsAI — AI Mock Interview Coach",
