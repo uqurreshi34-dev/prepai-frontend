@@ -94,7 +94,26 @@ export const authOptions: NextAuthOptions = {
         token.refreshToken = user.refreshToken
         token.isPro = user.isPro
         token.id = user.id
+        token.accessTokenExpiry = Date.now() + 60 * 60 * 1000 // 1 hour
       }
+
+      // Return token if still valid
+      if (Date.now() < (token.accessTokenExpiry as number)) {
+        return token
+      }
+
+      // Access token expired — refresh using Django refresh token
+      try {
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/token/refresh/`,
+          { refresh: token.refreshToken }
+        )
+        token.accessToken = res.data.access
+        token.accessTokenExpiry = Date.now() + 60 * 60 * 1000
+      } catch {
+        // Refresh failed — user will need to re-login
+      }
+
       return token
     },
     async session({ session, token }) {
@@ -110,5 +129,6 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
 }

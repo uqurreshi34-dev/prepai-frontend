@@ -13,4 +13,24 @@ api.interceptors.request.use(async (config) => {
   return config
 })
 
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+      try {
+        const session = await getSession()
+        if (session?.accessToken) {
+          originalRequest.headers.Authorization = `Bearer ${session.accessToken}`
+          return api(originalRequest)
+        }
+      } catch {
+        return Promise.reject(error)
+      }
+    }
+    return Promise.reject(error)
+  }
+)
+
 export default api

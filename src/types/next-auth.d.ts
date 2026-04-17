@@ -26,5 +26,6 @@ declare module "next-auth/jwt" {
     refreshToken: string
     isPro: boolean
     id: string
+    accessTokenExpiry: number
   }
 }
