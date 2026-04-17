@@ -77,7 +77,7 @@ export default function DashboardClient({ session }: { session: Session }) {
 
         <motion.div className="mb-8" {...anim(0)}>
           <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
-            Welcome back, {firstName}
+            Welcome {firstName}
           </h1>
           <p className="text-gray-500 mt-1 text-sm">
             {stats?.streak && stats.streak > 0
