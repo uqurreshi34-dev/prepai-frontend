@@ -1,4 +1,5 @@
 import GoogleProvider from "next-auth/providers/google"
+import AzureADProvider from "next-auth/providers/azure-ad"
 import CredentialsProvider from "next-auth/providers/credentials"
 import axios from "axios"
 import { NextAuthOptions } from "next-auth"
@@ -8,6 +9,11 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    AzureADProvider({
+      clientId: process.env.AZURE_AD_CLIENT_ID!,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      tenantId: process.env.AZURE_AD_TENANT_ID!,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -51,6 +57,20 @@ export const authOptions: NextAuthOptions = {
           const res = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google/`,
             { id_token: account.id_token }
+          )
+          user.accessToken = res.data.access
+          user.refreshToken = res.data.refresh
+          user.isPro = res.data.user.is_pro
+          user.id = res.data.user.id
+        } catch {
+          return false
+        }
+      }
+      if (account?.provider === "azure-ad") {
+        try {
+          const res = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/microsoft/`,
+            { access_token: account.access_token }
           )
           user.accessToken = res.data.access
           user.refreshToken = res.data.refresh

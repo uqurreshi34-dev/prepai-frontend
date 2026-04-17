@@ -66,6 +66,10 @@ export default function Register() {
     await signIn("google", { callbackUrl: "/dashboard", prompt: "select_account" })
   }
 
+  async function handleMicrosoft() {
+    await signIn("azure-ad", { callbackUrl: "/dashboard" })
+  }
+
   const inputClass = "w-full border border-gray-200 rounded-xl py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
   const inputStyle = { boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }
 
@@ -203,6 +207,20 @@ export default function Register() {
               <path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.31z"/>
             </svg>
             Continue with Google
+          </button>
+
+          <button
+            onClick={handleMicrosoft}
+            className="w-full flex items-center justify-center gap-2.5 border border-gray-200 rounded-xl py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 active:scale-[0.99] transition-all cursor-pointer mt-3"
+            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 21 21" fill="none">
+              <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+              <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+              <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+              <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+            </svg>
+            Continue with Microsoft
           </button>
 
           <p className="text-center text-sm text-gray-500 mt-6">
