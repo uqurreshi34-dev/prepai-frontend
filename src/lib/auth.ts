@@ -14,6 +14,11 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.AZURE_AD_CLIENT_ID!,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
       tenantId: "consumers",
+      authorization: {
+        params: {
+          scope: "openid profile email User.Read offline_access",
+        },
+      },
     }),
     CredentialsProvider({
       name: "credentials",
@@ -70,13 +75,14 @@ export const authOptions: NextAuthOptions = {
         try {
           const res = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/auth/microsoft/`,
-            { access_token: account.access_token }
+            { access_token: account.access_token || account.id_token }
           )
           user.accessToken = res.data.access
           user.refreshToken = res.data.refresh
           user.isPro = res.data.user.is_pro
           user.id = res.data.user.id
-        } catch {
+        } catch (err) {
+          console.error("Microsoft auth error:", err)
           return false
         }
       }
