@@ -41,7 +41,7 @@ export default function Login() {
   }
 
   async function handleMicrosoft() {
-    await signIn("azure-ad", { callbackUrl: "/dashboard" })
+    await signIn("azure-ad", { callbackUrl: "/dashboard", prompt: "select_account" })
   }
 
   return (
